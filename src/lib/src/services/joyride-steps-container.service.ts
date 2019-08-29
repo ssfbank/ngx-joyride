@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { JoyrideOptionsService } from './joyride-options.service';
 import { LoggerService } from './logger.service';
 import { JoyrideError, JoyrideStepOutOfRange } from '../models/joyride-error.class';
+import { StepRoute } from '../models/joyride-step-route.class';
 
 const ROUTE_SEPARATOR = '@';
 
@@ -76,7 +77,7 @@ export class JoyrideStepsContainerService {
         return stepFound;
     }
 
-    getStepRoute(action: StepActionType) {
+    getStepRoute(action: StepActionType): StepRoute {
         let stepID: string;
         if (action === StepActionType.NEXT) {
             stepID = this.steps[this.currentStepIndex + 1] ? this.steps[this.currentStepIndex + 1].id : null;
@@ -85,7 +86,10 @@ export class JoyrideStepsContainerService {
         }
         let stepRoute = stepID && stepID.includes(ROUTE_SEPARATOR) ? stepID.split(ROUTE_SEPARATOR)[1] : '';
 
-        return stepRoute;
+        return <StepRoute>{
+            routerLink: (stepRoute && stepRoute.includes('?') ? stepRoute.split('?')[0] : stepRoute),
+            queryParams: this.getRouteQueryParams(stepRoute)
+        }
     }
 
     updatePosition(stepName: string, position: string) {
@@ -106,6 +110,18 @@ export class JoyrideStepsContainerService {
     getStepsCount() {
         let stepsOrder = this.stepOptions.getStepsOrder();
         return stepsOrder.length;
+    }
+
+    private getRouteQueryParams(route: string): any {
+        const rawQueryParams = route && route.includes('?') ? route.split('?')[1].split('&') : [];
+        const queryParams = rawQueryParams.length > 0 ? {} : null;
+
+        for (let rawQueryParam of rawQueryParams) {
+            const decomposedQueryParam = rawQueryParam.split('=');
+            queryParams[decomposedQueryParam[0]] = decomposedQueryParam[1];
+        };
+
+        return queryParams;
     }
 
     private getStepIndex(stepName: string): number {

@@ -13,6 +13,7 @@ import { ReplaySubject, Observable } from 'rxjs';
 import { JoyrideStepInfo } from '../models/joyride-step-info.class';
 import { JoyrideStepDoesNotExist, JoyrideStepOutOfRange } from '../models/joyride-error.class';
 import { LoggerService } from './logger.service';
+import { StepRoute } from '../models/joyride-step-route.class';
 
 const SCROLLBAR_SIZE = 20;
 
@@ -106,9 +107,9 @@ export class JoyrideStepService implements IJoyrideStepService {
     }
 
     private navigateToStepPage(action: StepActionType) {
-        let stepRoute = this.stepsContainerService.getStepRoute(action);
+        const stepRoute: StepRoute = this.stepsContainerService.getStepRoute(action);
         if (stepRoute) {
-            this.router.navigate([stepRoute]);
+            this.router.navigate([stepRoute.routerLink], {queryParams: stepRoute.queryParams});
         }
     }
 
