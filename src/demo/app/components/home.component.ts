@@ -51,7 +51,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
                 'firstStep@app',
                 'step11@app',
                 'scrollStep@app',
-                'step1@about/you',
+                'step1@about/you?queryparam=test&queryparam2=test2',
                 'myStep2@app/routeB',
                 'home1@app',
                 'ciao',
